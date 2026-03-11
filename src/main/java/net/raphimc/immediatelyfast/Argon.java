@@ -15,70 +15,74 @@ import java.net.*;
 
 @SuppressWarnings("all")
 public final class Argon {
-	public RotatorManager rotatorManager;
-	public ProfileManager profileManager;
-	public ModuleManager moduleManager;
-	public EventManager eventManager;
-	public FriendManager friendManager;
-	public static MinecraftClient mc;
-	public String version = " b1.3";
-	public static boolean BETA; //this was for beta kids but ablue never made it a reality, and you basically paid extra 10 bucks for nothing while ablue spent it all on war thunder to buy pre-historic tanks and estrogen 🤡🤡🤡
-	public static Argon INSTANCE;
-	public boolean guiInitialized;
-	public ClickGui clickGui;
-	public Screen previousScreen = null;
-	public long lastModified;
-	public File argonJar;
+    public RotatorManager rotatorManager;
+    public ProfileManager profileManager;
+    public ModuleManager moduleManager;
+    public EventManager eventManager;
+    public FriendManager friendManager;
+    public static MinecraftClient mc;
+    public String version = " b1.3";
+    public static boolean BETA; //this was for beta kids but ablue never
+    public static Argon INSTANCE;
+    public boolean guiInitialized;
+    public ClickGui clickGui;
+    public Screen previousScreen = null;
+    public long lastModified;
+    public File argonJar;
 
-	public Argon() throws InterruptedException, IOException {
-		INSTANCE = this;
-		this.eventManager = new EventManager();
-		this.moduleManager = new ModuleManager();
-		this.clickGui = new ClickGui();
-		this.rotatorManager = new RotatorManager();
-		this.profileManager = new ProfileManager();
-		this.friendManager = new FriendManager();
+    public Argon() throws InterruptedException, IOException {
+        INSTANCE = this;
+        this.eventManager = new EventManager();
+        this.moduleManager = new ModuleManager();
+        this.clickGui = new ClickGui();
+        this.rotatorManager = new RotatorManager();
+        this.profileManager = new ProfileManager();
+        this.friendManager = new FriendManager();
 
-		this.getProfileManager().loadProfile();
-		this.setLastModified();
+        this.getProfileManager().loadProfile();
+        this.setLastModified();
 
-		this.guiInitialized = false;
-		mc = MinecraftClient.getInstance();
-	}
+        this.guiInitialized = false;
+        mc = MinecraftClient.getInstance();
 
-	public ProfileManager getProfileManager() {
-		return profileManager;
-	}
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            this.moduleManager.save();
+        }));
+    }
 
-	public ModuleManager getModuleManager() {
-		return moduleManager;
-	}
+    public ProfileManager getProfileManager() {
+        return profileManager;
+    }
 
-	public FriendManager getFriendManager() {
-		return friendManager;
-	}
+    public ModuleManager getModuleManager() {
+        return moduleManager;
+    }
 
-	public EventManager getEventManager() {
-		return eventManager;
-	}
+    public FriendManager getFriendManager() {
+        return friendManager;
+    }
 
-	public ClickGui getClickGui() {
-		return clickGui;
-	}
+    public EventManager getEventManager() {
+        return eventManager;
+    }
 
-	public void resetModifiedDate() {
-		this.argonJar.setLastModified(lastModified);
-	}
+    public ClickGui getClickGui() {
+        return clickGui;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public void resetModifiedDate() {
+        this.argonJar.setLastModified(lastModified);
+    }
 
-	public void setLastModified() {
-		try {
-			this.argonJar = new File(Argon.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			// Comment out when debugging
-			this.lastModified = argonJar.lastModified();
-		} catch (URISyntaxException ignored) {}
-	}
+    public String getVersion() {
+        return version;
+    }
+
+    public void setLastModified() {
+        try {
+            this.argonJar = new File(Argon.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            // Comment out when debugging
+            this.lastModified = argonJar.lastModified();
+        } catch (URISyntaxException ignored) {}
+    }
 }
