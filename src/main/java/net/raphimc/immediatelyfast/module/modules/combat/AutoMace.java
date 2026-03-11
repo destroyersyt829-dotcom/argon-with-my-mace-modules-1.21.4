@@ -7,7 +7,6 @@ import net.raphimc.immediatelyfast.module.setting.BooleanSetting;
 import net.raphimc.immediatelyfast.module.setting.NumberSetting;
 import net.raphimc.immediatelyfast.utils.EncryptedString;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
@@ -60,24 +59,18 @@ public final class AutoMace extends Module implements TickListener {
 
         if (mc.player == null || mc.world == null || mc.interactionManager == null) return;
 
-        // Must be holding Mace
         if (mc.player.getMainHandStack().getItem() != Items.MACE) return;
 
-        // Require falling check
         if (requireFalling.getValue() && mc.player.getVelocity().y >= 0) return;
 
-        // Minimum fall distance check
         if (mc.player.fallDistance < minFallDistance.getValue()) return;
 
-        // Attack delay check
         long now = System.currentTimeMillis();
         if (now - lastAttackTime < delay.getValue()) return;
 
-        // Find closest enemy in FOV
         LivingEntity target = getTargetInFOV(mc);
         if (target == null) return;
 
-        // Attack
         mc.interactionManager.attackEntity(mc.player, target);
         mc.player.swingHand(Hand.MAIN_HAND);
         lastAttackTime = now;
@@ -92,32 +85,30 @@ public final class AutoMace extends Module implements TickListener {
         LivingEntity closest = null;
         double closestDist = Double.MAX_VALUE;
 
-        List<Entity> entities = mc.world.getEntitiesByClass(
+        List<LivingEntity> entities = mc.world.getEntitiesByClass(
                 LivingEntity.class,
                 mc.player.getBoundingBox().expand(range.getValue()),
                 e -> true
         );
 
-        for (Entity entity : entities) {
+        for (LivingEntity entity : entities) {
             if (entity == mc.player) continue;
-            if (!(entity instanceof LivingEntity living)) continue;
-            if (living.isDead()) continue;
+            if (entity.isDead()) continue;
             if (onlyPlayers.getValue() && !(entity instanceof PlayerEntity)) continue;
 
             double distSq = eyePos.squaredDistanceTo(entity.getPos());
             if (distSq > rangeSq) continue;
 
-            // FOV check
             Vec3d toEntity = entity.getEyePos().subtract(eyePos).normalize();
             double angle = Math.toDegrees(Math.acos(MathHelper.clamp(lookDir.dotProduct(toEntity), -1.0, 1.0)));
             if (angle > halfFov) continue;
 
             if (distSq < closestDist) {
                 closestDist = distSq;
-                closest = living;
+                closest = entity;
             }
         }
 
         return closest;
     }
-          }
+    }
