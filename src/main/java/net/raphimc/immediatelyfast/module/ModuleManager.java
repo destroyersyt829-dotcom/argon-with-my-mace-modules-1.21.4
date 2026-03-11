@@ -43,7 +43,9 @@ public final class ModuleManager implements ButtonListener {
 		add(new ShieldDisabler());
 		add(new TotemOffhand());
 		add(new AutoJumpReset());
-
+		add(new MaceTrigger());
+		add(new AutoMace());
+		add(new MaceSwap());
 		//Misc
 		add(new Prevent());
 		add(new AutoXP());
