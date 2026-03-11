@@ -87,7 +87,7 @@ public final class ModuleManager implements ButtonListener {
         Argon.INSTANCE.getEventManager().add(ButtonListener.class, this);
 
         for (Module module : modules)
-            module.addSetting(new KeybindSetting(EncryptedString.of("Key"), -1, module));
+            module.addSetting(new KeybindSetting(EncryptedString.of("Key"), -1, true));
     }
 
     public List<Module> getModulesInCategory(Category category) {
@@ -121,4 +121,4 @@ public final class ModuleManager implements ButtonListener {
             });
         }
     }
-			}
+}
